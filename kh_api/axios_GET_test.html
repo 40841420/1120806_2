@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 解決不認得axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        *{
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .DoctorName{
+            margin: 10px;
+            color: red;
+
+        }
+        .Exper{
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="js" id="dataList">
+        <!-- <h1>.................</h1> -->
+    </div>
+</body>
+<script>
+    //GET請求
+    axios({
+        method: 'get',
+        url: 'https://api.kcg.gov.tw/api/service/Get/95d026d5-c0c6-463b-b468-50cf1432ddcd',
+
+    })
+
+        .then((response) => {
+            //跑單一一筆資料
+            // const data = response.data.data.DoctorInfo[0];
+            // console.log(data);
+            // fffff(data);
+
+            //跑ARRAY
+            const data = response.data.data.DoctorInfo;
+            console.log(data);
+            fffff(data);
+
+        })
+
+
+    // 函式
+    function fffff(data) {
+
+        //跑單一個
+        // const avatar = document.querySelector('.js') //括號裡頭放 html的id、class、js語法
+        // console.log('avatar',avatar)
+        // avatar.innerHTML = `<h1>
+        //     ${data.DoctorName}
+        // </h1>`
+
+        // 跑array
+        let dataListHTML = "";
+            
+            data.forEach(item => {
+                dataListHTML += `<li class="DoctorName">醫生姓名:${item.DoctorName}</li>`;
+                dataListHTML += `<li class="Exper">經歷:${item.Exper}</li>`;
+            });
+
+            // 将 HTML 字符串插入到页面的 ul 元素中
+            const dataListElement = document.getElementById("dataList");
+            dataListElement.innerHTML = dataListHTML;
+
+    }
+
+
+</script>
+
+</html>

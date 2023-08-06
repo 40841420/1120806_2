@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+    <!-- 解決不認得axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        * {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+ 
+
+        h1 {
+            margin: 10px;
+            text-align: center;
+        }
+
+        #myForm {
+            margin: auto;
+            text-align: center;
+        }
+
+
+        .DoctorName {
+            /* background-color: #fa0; */
+            margin: 20px;
+            color: red;
+
+        }
+
+        .Exper {
+            /* background-color: #000; */
+            margin: 20px;
+            height: 30vh;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        #myForm {
+            margin: 20px;
+        }
+
+        .district {
+            margin: auto;
+            padding: 10px;
+            text-align-last: left;
+            /* background-color: #fa0; */
+            width: 500px;
+            /* border: 1px solid #000; */
+        }
+
+        #dataList {
+            margin: auto;
+            width: 380px;
+            
+        }
+
+        #dataList ul {
+            border: 1px solid #000;
+            margin: 10px;
+        }
+
+        #dataList ul .number {
+            background-color: #fa0;
+            font-size: 20px;
+            width: 338px;
+            font-weight: 1000;
+        }
+
+        #dataList ul .die {
+            color: red;
+        }
+
+        #dataList ul .accident {
+            color: red;
+        }
+
+        .footer {
+            margin: 10px 0 0px 0;
+            text-align: center;
+            background-color: #000;
+            color: #888;
+            padding: 20px 0;
+        }
+
+        /*低於768，767開始RWD */
+        /* 裡頭內容電腦螢幕大小 */
+        @media screen and (min-width:768px) {
+            #dataList {
+                margin: auto;
+                text-align: center;
+                justify-content: center;
+                /* width: 500px; */
+               
+                display: flex;
+            }
+
+            #dataList ul .number {
+                background-color: #fa0;
+                font-size: 20px;
+                width: 500px;
+                font-weight: 1000;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <h1>高雄市112年A1交通事故統計</h1>
+    <form id="myForm">
+        <label for="searchInput">請選擇鄉鎮市區：</label>
+        <select id="searchInput" name="district">
+            <option value="楠梓區">楠梓區</option>
+            <option value="大寮區">大寮區</option>
+            <option value="鳳山區">鳳山區</option>
+            <option value="美濃區">美濃區</option>
+            <option value="湖內區">湖內區</option>
+            <option value="旗津區">旗津區</option>
+            <option value="梓官區">梓官區</option>
+            <option value="茄萣區">茄萣區</option>
+            <option value="鳥松區">鳥松區</option>
+            <!-- 在這裡新增更多鄉鎮選項 -->
+        </select>
+        <button type="submit">搜尋</button>
+    </form>
+
+    <div class="js" id="dataList">
+        <!-- <h1>.................</h1> -->
+    </div>
+    <div class="footer">
+        &copy;copyright 2023 by yu
+    </div>
+</body>
+<script>
+    //GET請求
+    axios({
+        method: 'get',
+        url: 'https://api.kcg.gov.tw/api/service/get/ddf31f47-e274-4a17-bd0d-ae2aee864922',
+
+    })
+
+        .then((response) => {
+            //取得高雄市政府的開放資料
+            const data = response.data.data;
+            console.log(data);
+
+            // 檢查資料是否為空
+            // if (!data || data.length === 0) {
+            //     console.error("No data found.");
+            //     return; // 終止後續處理
+            // };
+            // 使用模糊搜尋function
+            searchView(data);
+
+        })
+
+        .catch((error) => {
+            // 處理錯誤
+            console.error("Error fetching data:", error);
+        });
+
+
+    //模糊收尋 founction
+    // 使用 FormData 獲取用戶輸入的值
+    function searchView(data) {
+        document.getElementById("myForm").addEventListener("submit",
+            function (event) {
+
+                event.preventDefault(); // 阻止表單的默認提交行為
+                const formData = new FormData(event.target);
+                const district = formData.get("district");
+                // console.log(district);
+
+
+                //針對區域的姓名下去做查詢
+                const key = "鄉鎮市區";
+
+                //const valueArr = ["黃"];    //寫死的
+                //改為[doctorName]，接收變數使用
+                const valueArr = [district];
+
+                // 模糊搜尋
+                //let res = data.filter(item => valueArr.find(i => i === item[key]));
+                let res = data.filter(item => valueArr.find(i => item[key].includes(i)));
+                // 將篩選結果印出
+
+
+                //做迴圈把array跑出來 console.log 檢視
+                res.forEach(element => {
+                    console.log(element);
+                });
+
+                //做迴圈把array跑出來，丟到html 檢視
+                let dataListHTML = "";//做個空陣列放資料
+
+                res.forEach(item => {
+                    // dataListHTML += `<li class="district">縣市:${item.縣市}</li>`;
+                    dataListHTML += `<ul>`;
+                    dataListHTML += `<li class="district number">事故總編號:${item.總編號}</li>`;
+                    dataListHTML += `<li class="district">事故年月:${item.事故年月}</li>`;
+                    dataListHTML += `<li class="district">發生日期:${item.發生日期}</li>`;
+                    dataListHTML += `<li class="district">天候說明:${item.天候說明}</li>`;
+                    dataListHTML += `<li class="district">處理單位:${item.單位名稱}</li>`;
+                    dataListHTML += `<li class="district die">死亡人數:${item.死亡人數}</li>`;
+                    // dataListHTML += `</br>`;
+
+                    dataListHTML += `<li class="district">事故位置說明:${item.事故位置說明}</li>`;
+                    dataListHTML += `<li class="district accident">事故類型及型態說明:${item.事故類型及型態說明}</li>`;
+                    dataListHTML += `<li class="district">光線說明:${item.光線說明}</li>`;
+
+
+                    dataListHTML += `<li class="district">號誌動作說明:${item.號誌動作說明}</li>`;
+                    dataListHTML += `<li class="district">視距說明:${item.視距說明}</li>`;
+                    // dataListHTML += `</br>`;
+
+                    dataListHTML += `<li class="district">路面狀態說明:${item.路面狀態說明}</li>`;
+                    dataListHTML += `<li class="district">路面缺陷說明:${item.路面缺陷說明}</li>`;
+                    dataListHTML += `<li class="district">路面鋪裝說明:${item.路面鋪裝說明}</li>`;
+                    // dataListHTML += `</br>`;
+
+                    dataListHTML += `<li class="district">速限:${item.速限}</li>`;
+                    dataListHTML += `<li class="district">道路型態說明:${item.道路型態說明}</li>`;
+                    dataListHTML += `<li class="district">道路說明:${item.道路說明}</li>`;
+                    dataListHTML += `<li class="district">障礙物說明:${item.障礙物說明}</li>`;
+                    dataListHTML += `</br>`;
+                    dataListHTML += `</ul>`;
+
+                });
+
+                // 将 HTML 字符串插入到页面的 ul 元素中
+                const dataListElement = document.getElementById("dataList");
+                dataListElement.innerHTML = dataListHTML;
+
+            }
+        );
+
+    }
+
+
+
+</script>
+
+</html>
